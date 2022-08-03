@@ -1,0 +1,254 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
+using System.Data;
+using System.Configuration;
+namespace LibLogin
+{
+    public class LoginDataStore
+    {
+
+        SqlConnection connection = null;
+        SqlCommand command = null;
+        SqlDataReader reader = null;
+
+        public LoginDataStore() { }
+        public LoginDataStore(string connectionString)
+        {
+            connection = new SqlConnection(connectionString);
+        }
+        public string ConnectionString { get; }
+        LogIn logIn=new LogIn();
+        public bool GetUserName()
+        {
+
+            try
+            {
+                //      string sql = "Insert into Emp(empNo,ename,hiredate,sal) values(@empno,@ename,@hiredate,@sal)";
+                string sql = "Select username from userdata where username=@username";
+                command = new SqlCommand(sql, connection);
+                command.Parameters.AddWithValue("@username",logIn.password);
+                //command.Parameters.AddWithValue("ename", emp.Ename);
+                //command.Parameters.AddWithValue("hiredate", emp.Hiredate);
+                //command.Parameters.AddWithValue("sal", emp.Sal);
+
+                if (connection.State == ConnectionState.Closed)
+                {
+                    connection.Open();
+                }
+                string userName = (command.ExecuteScalar()).ToString();
+                
+                if (userName!=null)
+                {
+                    return true;
+
+                }
+                else
+                    return false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            reader = command.ExecuteReader();
+
+        }
+
+
+        //password
+        
+
+        public  bool GetPassword()
+        {
+
+            try
+            {
+                //      string sql = "Insert into Emp(empNo,ename,hiredate,sal) values(@empno,@ename,@hiredate,@sal)";
+                string sql = "Select password from userdata where username=@password";
+                command = new SqlCommand(sql, connection);
+                command.Parameters.AddWithValue("password", logIn.password);
+                //command.Parameters.AddWithValue("ename", emp.Ename);
+                //command.Parameters.AddWithValue("hiredate", emp.Hiredate);
+                //command.Parameters.AddWithValue("sal", emp.Sal);
+
+                if (connection.State == ConnectionState.Closed)
+                {
+                    connection.Open();
+                }
+                string password = (command.ExecuteScalar()).ToString();
+                if (password!=null)
+                { return true; }
+                else
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            reader = command.ExecuteReader();
+
+        }
+
+        //public bool ValidationReport() 
+        //{
+        //    LogIn logIn = new LogIn();
+        //    LoginDataStore log = new LoginDataStore();
+        //    if (log.GetUserName(logIn) == true && log.GetPassword(logIn) == true) 
+        //    {
+        //        return true;
+        //    }
+        //    return false;
+        //}
+
+
+
+    }
+}
+---------------------------------------------------
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data;
+using System.Configuration;
+using System.Data.SqlClient;
+using LibLogin;
+
+namespace WindowsFormsApp1
+{
+    public partial class LoginForm : Form
+    {
+     
+        public LoginForm()
+        {
+            InitializeComponent();
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+        public string USERNAME;
+        public string PASSWORD;
+
+        private void btnLogin_Click(object sender, EventArgs e)
+        {
+            SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["connstr"].ConnectionString);
+
+            LoginDataStore loginDataStore = new LoginDataStore();
+            LogIn logIn = new LogIn();
+           // logIn.userName=txtUserName.Text;
+            USERNAME=txtUserName.Text;
+
+          //  logIn.password=txtPassword.Text;
+            PASSWORD=txtPassword.Text;  
+
+
+            MessageBox.Show("hiii");
+            MessageBox.Show(logIn.userName);
+            bool temp = loginDataStore.GetUserName();
+
+           // MessageBox.Show(temp.ToString());
+
+            if (loginDataStore.GetUserName()==true && loginDataStore.GetPassword()==true) 
+            {
+                MessageBox.Show("LogInSuccessfully");
+            }
+        
+        }
+    }
+}
+
+----------------------------------------------------
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace WindowsFormsApp1
+{
+    internal static class Program
+    {
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new LoginForm());
+        }
+    }
+}
+-------------------------------------------
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data;
+using System.Configuration;
+using System.Data.SqlClient;
+using LibLogin;
+
+namespace WindowsFormsApp1
+{
+    public partial class LoginForm : Form
+    {
+     
+        public LoginForm()
+        {
+            InitializeComponent();
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+        public string USERNAME;
+        public string PASSWORD;
+
+        private void btnLogin_Click(object sender, EventArgs e)
+        {
+            SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["connstr"].ConnectionString);
+
+            LoginDataStore loginDataStore = new LoginDataStore();
+            LogIn logIn = new LogIn();
+           // logIn.userName=txtUserName.Text;
+            USERNAME=txtUserName.Text;
+
+          //  logIn.password=txtPassword.Text;
+            PASSWORD=txtPassword.Text;  
+
+
+            MessageBox.Show("hiii");
+            MessageBox.Show(logIn.userName);
+            bool temp = loginDataStore.GetUserName();
+
+           // MessageBox.Show(temp.ToString());
+
+            if (loginDataStore.GetUserName()==true && loginDataStore.GetPassword()==true) 
+            {
+                MessageBox.Show("LogInSuccessfully");
+            }
+        
+        }
+    }
+}
